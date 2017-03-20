@@ -115,3 +115,64 @@ const request = new PaymentRequest(methodData, details, options);
 ```
 
 `PaymentRequest(methodData, details, options)` コンストラクタは次のように振る舞います。
+
+1. paymentRequestId が与えられていなければ、 paymentRequestId が作られます。
+2. current settings object の responsible document が allowpaymentrequest 属性に示された機能の使用を許可していないとき、 SecurityError DOMException を投げます。
+3. serializedMethodData を空のリストにします。
+4. リクエストIDを発行します。
+  1. もし details.id が無ければ details に id を追加し、この決済請求を一意に特定できるような文字列をセットします。この文字列は UUID (A Universally Unique IDentifier URN Namespace) であることが推奨されています。
+5. payment methods を処理します。
+  1. methodData シーケンスの長さが0なら TypeError を投げ、最低一つの payment method が必要であることをデベロッパーに伝えます。
+  2. methodData のそれぞれの paymentMethod について
+    1. paymentMethod.supportedMethods シーケンスの長さが0なら TypeError を投げ、各 payment method は最低一つの payment method 識別子が必要であることをデベロッパーに伝えます。
+    2. paymentMethod が存在するとき serializedData は paymentMethod.data をJSONシリアライズした結果（文字列）にします。存在しなければ null を返し、何か例外を投げます。
+    3. serializedMethodData にタプル (paymentMethod.supportedMethods, serializedData) を追加します。
+6. total を処理します。
+  1. details.total.amount.value が有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
+  2. details.total.amount.value の始めの文字が U+002D HYPHEN-MINUS（-のこと）なら TypeError を投げ、total が負数にならないことをデベロッパーに伝えます。
+7. displayItems が存在するとき、 details.displayItems のそれぞれについて
+  1. item.amount.value が有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
+8. selectedShippingOption を null にします。
+9. 配送オプションを処理します。
+  1. options を空のシーケンス <PaymentShippingOption> にします。
+  2. shippingOptions が存在するとき
+    1. seenIDs を空のリストにします。
+    2. options を details.shippingOptions とします。
+    3. options のそれぞれの option について
+     1. option.amount.value が有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
+     2. seenIDs が option.id をもっているとき、options を空のシーケンスにして break します。
+     3. option.id を seenIds に追加します。
+    4. options のそれぞれの option について（前の手順で空のシーケンスにリセットされているもの）
+      1. option.selected が true なら、option.id に selectedShippingOption をセットします。
+  3. options を details.shippingOptions とします。
+10. serializedMethodData を空のリストにします。
+11. payment details modifiers を処理します。
+  1. modifiers を空のシーケンス <PaymentDetailsModifier> にします。
+  2. modifiers が存在するとき
+    1. details.modifiers に modifiers をセットします。
+    2. modifiers のそれぞれの modifier について
+      1. modifier に total が存在するとき
+        1. value を modifier.total.amount.value にします。
+        2. value が有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
+        3. value の始めの文字が U+002D HYPHEN-MINUS（-のこと）なら TypeError を投げ、total が負数にならないことをデベロッパーに伝えます。
+      2. additionalDisplayItems が存在するとき、 modifier.additionalDisplayItems のそれぞれについて
+        1. value を item.amount.value にします。
+        2. valueが有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
+      3. serializedData は modifier.data をJSONシリアライズした結果（文字列）にします。存在しなければ null を返し、何か例外を投げます。
+      4. serializedModifierData に serializedData を追加します。
+      5. modifier に data が存在すれば削除します。
+  3. modifiers に details.modifiers をセットします。
+12. request を新しい PaymentRequest にします。
+13. request.[[options]] に options をセットします。
+14. request.[[state]] に "created" をセットします。
+15. request.[[updating]] に false をセットします。
+16. request.[[details]] に details をセットします。
+17. request.[[serializedModifierData]] に serializedModifierData をセットします。
+18. request.[[serializedMethodData]] に serializedMethodData をセットします。
+19. selectedShippingOption に request の shippingOption 属性の値をセットします。
+20. request の shippingAddress を null にします。
+21. request の shippingType を null にします。
+22. options.requestShipping が true にセットされていれば、 request の shippingType 属性の値を options.shippingType にします。 options.shippingType が有効な PaymentShippingType の値でなければ、 request の shippingType 属性の値を "shipping" にします。
+  NOTE:
+  この振る舞いにより、ページはサポートされていない配送方法を提供したかどうかを検出できます。将来の仕様で新しい配送方法が追加されても以前のバージョンをサポートしているユーザーエージェントでページを実行している場合に、これは重要となります。
+23. request を返します。
