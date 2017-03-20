@@ -129,25 +129,25 @@ const request = new PaymentRequest(methodData, details, options);
 5. total を処理します。
   1. details.total.amount.value が有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
   2. details.total.amount.value の始めの文字が U+002D HYPHEN-MINUS（-のこと）なら TypeError を投げ、total が負数にならないことをデベロッパーに伝えます。
-6. displayItems が存在するとき、 details.displayItems のそれぞれについて
+6. details.displayItems が存在するとき、 details.displayItems のそれぞれについて
   1. item.amount.value が有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
 7. selectedShippingOption を null にします。
 8. 配送オプションを処理します。
   1. options を空のシーケンス <PaymentShippingOption> にします。
-  2. shippingOptions が存在するとき
+  2. details.shippingOptions が存在するとき
     1. seenIDs を空のリストにします。
     2. options を details.shippingOptions とします。
     3. options のそれぞれの option について
      1. option.amount.value が有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
      2. seenIDs が option.id をもっているとき、options を空のシーケンスにして break します。
-     3. option.id を seenIds に追加します。
+     3. option.id を seenIDs に追加します。
     4. options のそれぞれの option について（前の手順で空のシーケンスにリセットされているもの）
       1. option.selected が true なら、option.id に selectedShippingOption をセットします。
   3. options を details.shippingOptions とします。
-9. serializedMethodData を空のリストにします。
+9. serializedModifierData を空のリストにします。
 10. payment details modifiers を処理します。
   1. modifiers を空のシーケンス <PaymentDetailsModifier> にします。
-  2. modifiers が存在するとき
+  2. details.modifiers が存在するとき
     1. details.modifiers に modifiers をセットします。
     2. modifiers のそれぞれの modifier について
       1. modifier に total が存在するとき
