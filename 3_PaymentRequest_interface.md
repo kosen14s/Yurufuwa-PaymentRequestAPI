@@ -20,7 +20,7 @@ interface PaymentRequest : EventTarget {
 ```
 
 ウェブページは決済請求のために PaymentRequest を作ります。
-これは一般的に決済処理を始めるユーザーに関連付けられます（例えばゲームで「パワーアップ」を選択したり、立体駐車場を利用して精算機に向かったり、「買う」「支払う」といったボタンを押したりする）。
+これは一般的に決済処理を始めるユーザーに関連付けられます（例えばゲームで「パワーアップ」を選択したり、立体駐車場で車を精算機につけたり、「買う」「支払う」といったボタンを押したりする）。
 この PaymentRequest はユーザーが決済請求の承認や拒否前に入力を提供しているとき、ウェブページがユーザーエージェントと情報交換することを可能にします。
 
 `shippingAddress` `shippingOption` `shippingType` 属性は requestShipping フラグが立っているときに設定されます。
@@ -80,7 +80,7 @@ const methodData = [{
 const request = new PaymentRequest(methodData, details, options);
 ```
 
-details オブジェクトには例えば注文の詳細など、ユーザーの確認が求められている取引についての情報が含まれています。
+details オブジェクトには例えば注文の詳細など、ユーザーの入力が求められている取引についての情報が含まれています。
 
 ```
 EXAMPLE 3: The 'details' argument
