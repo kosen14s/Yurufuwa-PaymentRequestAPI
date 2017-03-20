@@ -116,24 +116,23 @@ const request = new PaymentRequest(methodData, details, options);
 
 `PaymentRequest(methodData, details, options)` コンストラクタは次のように振る舞います。
 
-1. paymentRequestId が与えられていなければ、 paymentRequestId が作られます。
-2. current settings object の responsible document が allowpaymentrequest 属性に示された機能の使用を許可していないとき、 SecurityError DOMException を投げます。
-3. serializedMethodData を空のリストにします。
-4. リクエストIDを発行します。
+1. current settings object の responsible document が allowpaymentrequest 属性に示された機能の使用を許可していないとき、 SecurityError DOMException を投げます。
+2. serializedMethodData を空のリストにします。
+3. リクエストIDを発行します。
   1. もし details.id が無ければ details に id を追加し、この決済請求を一意に特定できるような文字列をセットします。この文字列は UUID (A Universally Unique IDentifier URN Namespace) であることが推奨されています。
-5. payment methods を処理します。
+4. payment methods を処理します。
   1. methodData シーケンスの長さが0なら TypeError を投げ、最低一つの payment method が必要であることをデベロッパーに伝えます。
   2. methodData のそれぞれの paymentMethod について
     1. paymentMethod.supportedMethods シーケンスの長さが0なら TypeError を投げ、各 payment method は最低一つの payment method 識別子が必要であることをデベロッパーに伝えます。
     2. paymentMethod が存在するとき serializedData は paymentMethod.data をJSONシリアライズした結果（文字列）にします。存在しなければ null を返し、何か例外を投げます。
     3. serializedMethodData にタプル (paymentMethod.supportedMethods, serializedData) を追加します。
-6. total を処理します。
+5. total を処理します。
   1. details.total.amount.value が有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
   2. details.total.amount.value の始めの文字が U+002D HYPHEN-MINUS（-のこと）なら TypeError を投げ、total が負数にならないことをデベロッパーに伝えます。
-7. displayItems が存在するとき、 details.displayItems のそれぞれについて
+6. displayItems が存在するとき、 details.displayItems のそれぞれについて
   1. item.amount.value が有効な10進数の金銭的な数値でないとき TypeError を投げ、無効な値であることをデベロッパーに伝えます。
-8. selectedShippingOption を null にします。
-9. 配送オプションを処理します。
+7. selectedShippingOption を null にします。
+8. 配送オプションを処理します。
   1. options を空のシーケンス <PaymentShippingOption> にします。
   2. shippingOptions が存在するとき
     1. seenIDs を空のリストにします。
@@ -145,8 +144,8 @@ const request = new PaymentRequest(methodData, details, options);
     4. options のそれぞれの option について（前の手順で空のシーケンスにリセットされているもの）
       1. option.selected が true なら、option.id に selectedShippingOption をセットします。
   3. options を details.shippingOptions とします。
-10. serializedMethodData を空のリストにします。
-11. payment details modifiers を処理します。
+9. serializedMethodData を空のリストにします。
+10. payment details modifiers を処理します。
   1. modifiers を空のシーケンス <PaymentDetailsModifier> にします。
   2. modifiers が存在するとき
     1. details.modifiers に modifiers をセットします。
@@ -162,17 +161,14 @@ const request = new PaymentRequest(methodData, details, options);
       4. serializedModifierData に serializedData を追加します。
       5. modifier に data が存在すれば削除します。
   3. modifiers に details.modifiers をセットします。
-12. request を新しい PaymentRequest にします。
-13. request.[[options]] に options をセットします。
-14. request.[[state]] に "created" をセットします。
-15. request.[[updating]] に false をセットします。
-16. request.[[details]] に details をセットします。
-17. request.[[serializedModifierData]] に serializedModifierData をセットします。
-18. request.[[serializedMethodData]] に serializedMethodData をセットします。
-19. selectedShippingOption に request の shippingOption 属性の値をセットします。
-20. request の shippingAddress を null にします。
-21. request の shippingType を null にします。
-22. options.requestShipping が true にセットされていれば、 request の shippingType 属性の値を options.shippingType にします。 options.shippingType が有効な PaymentShippingType の値でなければ、 request の shippingType 属性の値を "shipping" にします。
-  NOTE:
-  この振る舞いにより、ページはサポートされていない配送方法を提供したかどうかを検出できます。将来の仕様で新しい配送方法が追加されても以前のバージョンをサポートしているユーザーエージェントでページを実行している場合に、これは重要となります。
-23. request を返します。
+11. request を新しい PaymentRequest にします。
+12. request.[[options]] に options をセットします。
+13. request.[[state]] に "created" をセットします。
+14. request.[[updating]] に false をセットします。
+15. request.[[details]] に details をセットします。
+16. request.[[serializedModifierData]] に serializedModifierData をセットします。
+17. request.[[serializedMethodData]] に serializedMethodData をセットします。
+18. selectedShippingOption に request の shippingOption 属性の値をセットします。
+19. request の shippingAddress を null にします。
+20. request の shippingType を null にします。
+21. request を返します。
