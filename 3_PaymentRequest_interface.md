@@ -114,7 +114,7 @@ const options = {
 const request = new PaymentRequest(methodData, details, options);
 ```
 
-`PaymentRequest(methodData, details, options)` コンストラクタは次のように振る舞います。
+`PaymentRequest(methodData, details, options)` コンストラクタは次のように振る舞うべきです。
 
 1. current settings object の responsible document が allowpaymentrequest 属性に示された機能の使用を許可していないとき、 SecurityError DOMException を投げます。
 2. serializedMethodData を空のリストにします。
