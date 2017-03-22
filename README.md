@@ -8,3 +8,6 @@ kosen14s のひとがゆるふわに読んでいきたい。
 - 翻訳について、翻訳上の誤りがありえます。
 
 詳しくは [LICENSE](LICENSE) とか [https://www.w3.org/Consortium/Legal/2015/doc-license](https://www.w3.org/Consortium/Legal/2015/doc-license) とかをみてください
+
+# 誤訳とか誤植とかをみつけたら……
+このリポジトリに issue を立ててください。
