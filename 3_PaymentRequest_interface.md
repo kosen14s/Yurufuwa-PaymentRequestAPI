@@ -172,3 +172,7 @@ const request = new PaymentRequest(methodData, details, options);
 19. request の shippingAddress を null にします。
 20. request の shippingType を null にします。
 21. request を返します。
+
+## 3.2 id attribute
+
+取得すると、 id 属性は PaymentRequest の [[details]].id を返します。
