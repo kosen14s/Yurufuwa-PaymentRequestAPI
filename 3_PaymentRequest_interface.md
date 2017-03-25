@@ -176,3 +176,26 @@ const request = new PaymentRequest(methodData, details, options);
 ## 3.2 id attribute
 
 取得すると、 id 属性は PaymentRequest の [[details]].id を返します。
+
+
+## 3.4 abort() method
+
+NOTE:
+ abort() メソッドはウェブページがユーザエージェントに対して、支払いの要求を中止して、表示されているユーザインタフェースを取り消すことを望んだときに呼び出されます。 abort() メソッドは show() メソッドが呼ばれたあとで、かつ、そのインスタンスが [[acceptPromise]] を解決する前にのみ呼び出すことができます。たとえば、あるウェブページは、商品を限られた時間でのみ販売するためにこのメソッドを使うかもしれません。もし、ユーザが時間の制限内で支払い要求を受諾しなければ、その取引は中止されます。
+
+ ユーザエージェントはいつでもリクエストを中止できるわけではないかもしれません。たとえば、ユーザエージェントが、ほかのアプリケーションへのリクエストの責任を負っているような場合には、 abort() メソッドはリターンしてきた Promise によってリジェクトされるでしょう。
+
+
+ abort() メソッドは次のように振る舞わなければなりません。
+
+1. request を abort() メソッドのレシーバである PaymentRequest オブジェクトとします。
+2. もし request.[[state]] の値が、 "interactive" でない場合には "InvalidStateError" DOMException を送出します。
+3. promise をあたらしい Promise オブジェクトとします
+4. promise をリターンし、以下のステップを並列に（parallelに）処理します。
+5. 現在のユーザとの対話処理の中止を試み、残っているユーザインタフェースをすべて畳みます。
+6. 以下のステップを実行するような、ユーザインタラクションタスクソース上のタスクを、キューに追加します。
+    1. もし、現在のユーザとの対話処理が中止不可能ならば、promise を "InvalidStateError" DOMException の発行とともにリジェクトし、以下のステップも中止します。
+    2. 内部的な値である request.[[state]] を "closed" に設定します。
+    3. request.[[accceptPromise]] promiseを "AbortError" DOMException とともにリジェクトします
+    4. promise を undefined によって解決します
+
