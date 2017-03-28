@@ -177,7 +177,7 @@ const request = new PaymentRequest(methodData, details, options);
 
 取得すると、 id 属性は PaymentRequest の [[details]].id を返します。
 
-## 3.4 show() method
+## 3.3 show() method
 
 NOTE:
 show() メソッドはウェブページが決済要求のためユーザーインタラクションを望んだときに呼び出されます。
