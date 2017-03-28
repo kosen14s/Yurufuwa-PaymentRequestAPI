@@ -190,7 +190,7 @@ show() メソッドは次のように振る舞わなければなりません。
 2. もし request.[[state]] の値が、 "created" でない場合には "InvalidStateError" DOMException を送出します。
 3. request.[[state]] を "interactive" に設定します。
 4. acceptPromise をあたらしい Promise オブジェクトとします。
-5. request.[[acceptPromise]] に acceptPromise を設定します。
+5. acceptPromise を request.[[acceptPromise]] に設定します。
 6. 必要に応じて以下のことを行います。
     1. acceptPromise を "AbortError" DOMException とともにリジェクトします。
     2. request.[[state]] を "closed" に設定します。
@@ -200,7 +200,7 @@ show() メソッドは次のように振る舞わなければなりません。
     これにより、ユーザーエージェントはよしなにユーザーがすぐに決済要求を取り消したように振る舞うことができます。
     例えばブラウザのプライベートモードなどで、ユーザーエージェントはこの手順をとることがあります。
 7. acceptPromise をリターンし、以下のステップを並列に（parallelに）処理します。
-8. request.[[serializedMethodData]] 内それぞれの paymentMethod について
+8. request.[[serializedMethodData]] 内それぞれの paymentMethod メンバについて
     1. paymentMethod タプルの最初の要素によって与えられた決済方法識別子をサポートする決済アプリケーションを決めます。
        決済アプリケーションそれぞれについて、決済アプリケーションが提供する決済方法特有の機能がタプルの2番目の要素と一致する場合、決済アプリケーションはこれにマッチします。
 9. サポートされた決済方法が見つからない場合は、 acceptPromise を "NotSupportedError" DOMException とともにリジェクトして、このアルゴリズムを取り消します。
