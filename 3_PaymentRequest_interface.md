@@ -177,6 +177,40 @@ const request = new PaymentRequest(methodData, details, options);
 
 取得すると、 id 属性は PaymentRequest の [[details]].id を返します。
 
+## 3.3 show() method
+
+NOTE:
+show() メソッドはウェブページが決済要求のためユーザーインタラクションを望んだときに呼び出されます。
+show() メソッドはユーザーが決済要求を受諾した時に解決される Promise を返します。
+show() メソッドがリターンされたあと、決済要求を楽にするため、何かしらのユーザーインターフェースが表示されます。
+
+show() メソッドは次のように振る舞わなければなりません。
+
+1. request を abort() メソッドのレシーバである PaymentRequest オブジェクトとします。
+2. もし request.[[state]] の値が、 "created" でない場合には "InvalidStateError" DOMException を送出します。
+3. request.[[state]] を "interactive" に設定します。
+4. acceptPromise をあたらしい Promise オブジェクトとします。
+5. acceptPromise を request.[[acceptPromise]] に設定します。
+6. 必要に応じて以下のことを行います。
+    1. acceptPromise を "AbortError" DOMException とともにリジェクトします。
+    2. request.[[state]] を "closed" に設定します。
+    3. このアルゴリズムを取り消します。
+
+    NOTE:
+    これにより、ユーザーエージェントはよしなにユーザーがすぐに決済要求を取り消したように振る舞うことができます。
+    例えばブラウザのプライベートモードなどで、ユーザーエージェントはこの手順をとることがあります。
+7. acceptPromise をリターンし、以下のステップを並列に（parallelに）処理します。
+8. request.[[serializedMethodData]] 内それぞれの paymentMethod メンバについて
+    1. paymentMethod タプルの最初の要素によって与えられた決済方法識別子をサポートする決済アプリケーションを決めます。
+       決済アプリケーションそれぞれについて、決済アプリケーションが提供する決済方法特有の機能がタプルの2番目の要素と一致する場合、決済アプリケーションはこれにマッチします。
+9. サポートされた決済方法が見つからない場合は、 acceptPromise を "NotSupportedError" DOMException とともにリジェクトして、このアルゴリズムを取り消します。
+10. それ以外の場合は、これまでの手順によって実行可能とされた決済アプリケーションと決済方法を使って、ユーザーが決済要求プロセスとやりとりできるユーザーインターフェースを表示します。
+    ユーザーエージェントは supportedMethods で与えられた順番で決済方法を表示できますが、決済方法と決済アプリケーションを表示するときにはユーザーの優先順位を優先する必要があります。
+
+    決済プロセスを通じてユーザーをガイドするため、決済アプリケーションは request から適切なデータを送信される必要があります。
+    これは様々な属性と request 内部の値を含みます。
+
+    acceptPromise はユーザーが決済要求アルゴリズムを受け入れるかユーザーインターフェースとのインタラクションを通して取り消すことによって、のちに解決またはリジェクトされます。
 
 ## 3.4 abort() method
 
