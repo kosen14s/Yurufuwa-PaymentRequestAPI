@@ -12,6 +12,6 @@ PaymentMethodData ディクショナリは、サポートされる決済方法(p
 supportedMethods メンバ
 > supportedMethods は、売り手のウェブサイトが許容する決済方法に対する決済方法識別子(payment method identifiers)を含んだ必須の文字列です。
 
-data メンバ：
+data メンバ
 > data はサポートされる決済方法によって必要になる可能性のある任意の情報を提供するためのオブジェクトです。もしこれを使用する場合、JSONでシリアライズした結果を格納してください。
 
