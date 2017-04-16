@@ -231,3 +231,19 @@ NOTE:
     3. request.[[accceptPromise]] promiseを "AbortError" DOMException とともにリジェクトします
     4. promise を undefined によって解決します
 
+## 3.5 canMakePayment() method
+
+NOTE: canMakePayment() メソッドは開発者がPaymentRequestオブジェクトを、決済を行うために利用できるかどうか、 show() メソッドを呼び出す前に確かめるために用いることができます。 canMakePayment() メソッドは Promise オブジェクトを返します。この Promise オブジェクトは、PaymentRequest のコンストラクタに対して供給される何かしらの決済方法をユーザエージェントがサポートしている場合には true 、サポートされていない場合には false が与えれられ Fullfilled となります。 もしも、このメソッドがあまりにも多くの回数呼ばれた場合には、ユーザエージェントは自身の裁量で Promise を "QuotaExceededError" DOMException とともに reject するかもしれません。 
+
+canMakePayment() メソッドは次のように振る舞わなければなりません。
+
+1. request を canMakePayment() メソッドのレシーバである PaymentRequest オブジェクトとします
+2. request.[[state]] が "created" でなければ "InvalidSateteError" DOMException によってリジェクトされた Promise オブジェクトを返します。
+3. ユーザエージェントは自身の裁量によって、 "QuotaExceededError" DOMException によってリジェクトされた Promise オブジェクトを返しても構いません。
+NOTE: これはユーザエージェントに対して、ヒューリスティックに、フィンガープリントを取得する目的での canMakePayment() メソッドの乱用を検出し、それを防止することを許可します。 この canMakePayment() メソッドの乱用にはたとえば、 様々なサポートされている決済方法を使用して PaymentRequest オブジェクトを作成し、それらが使用できるかどうか canMakePayment() メソッドで確かめるという手法が考えられます。 ユーザエージェントはトップレベルのブラウジングコンテキストや、それらの呼び出しが行われた時間に基づいて、成功した呼び出しの数に制限をかけることができます。
+
+4. promise を 新しい Promise オブジェクトとします。
+5. promise を返します。そして、以下の残ったステップを並列に（parallel に）実行します。
+6. request.[[serializedMethodData]] の各 methodData に対して、以下を行います。
+    1. もし、 methodData.supportedMethods がユーザエージェントや、その他の決済アプリケーションのサポートする決済方法（これには決済方法の特定の機能も含みます）の識別子を含んでいる場合、 promise を true で解決し、このアルゴリズムを終了します。
+7. promise を false で解決します。
